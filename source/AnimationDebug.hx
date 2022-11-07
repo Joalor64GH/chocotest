@@ -8,13 +8,14 @@ import flixel.addons.display.FlxGridOverlay;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import Character;
 
 /**
 	*DEBUG MODE
  */
 class AnimationDebug extends FlxState
 {
-	var bf:Character.Boyfriend;
+	var bf:Boyfriend;
 	var dad:Character;
 	var char:Character;
 	var textAnim:FlxText;
