@@ -14,7 +14,7 @@ import flixel.util.FlxColor;
  */
 class AnimationDebug extends FlxState
 {
-	var bf:Boyfriend;
+	var bf:Character.Boyfriend;
 	var dad:Character;
 	var char:Character;
 	var textAnim:FlxText;
