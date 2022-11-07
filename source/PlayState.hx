@@ -111,8 +111,6 @@ class PlayState extends MusicBeatState
 	private var camHUD:FlxCamera;
 	private var camGame:FlxCamera;
 
-	var grpNoteSplashes = new FlxTypedGroup<NoteSplash>();
-
 	var dialogue:Array<String> = ['strange code', '>:]'];
 
 	var halloweenBG:FlxSprite;
@@ -179,12 +177,6 @@ class PlayState extends MusicBeatState
 
 		FlxG.cameras.reset(camGame);
 		FlxG.cameras.add(camHUD);
-
-		if (FlxG.save.data.splash) {
-			var tempNoteSplash = new NoteSplash(0, 0, 0);
-			grpNoteSplashes.add(tempNoteSplash);
-			tempNoteSplash.alpha = 0.1;
-		}
 
 		FlxCamera.defaultCameras = [camGame];
 
@@ -646,9 +638,6 @@ class PlayState extends MusicBeatState
 		strumLineNotes = new FlxTypedGroup<FlxSprite>();
 		add(strumLineNotes);
 
-		if (FlxG.save.data.splash)
-			add(grpNoteSplashes);
-
 		playerStrums = new FlxTypedGroup<FlxSprite>();
 
 		generateSong(SONG.song);
@@ -718,7 +707,6 @@ class PlayState extends MusicBeatState
 		scoreTxt.cameras = [camHUD];
 		missesTxt.cameras = [camHUD];
 		chocoTxt.cameras = [camHUD];
-		if (FlxG.save.data.splash) grpNoteSplashes.cameras = [camHUD];
 		doof.cameras = [camHUD];
 
 		startingSong = true;
@@ -880,9 +868,9 @@ class PlayState extends MusicBeatState
 			boyfriend.playAnim('idle');
 
 			var introAssets:Map<String, Array<String>> = new Map<String, Array<String>>();
-			introAssets.set('default', ['prepare', 'ready', "set", "go"]);
-			introAssets.set('school', ['UI/pixelUI/prepare-pixel', 'UI/pixelUI/ready-pixel', 'UI/pixelUI/set-pixel', 'UI/pixelUI/date-pixel']);
-			introAssets.set('schoolEvil', ['UI/pixelUI/prepare-pixel', 'UI/pixelUI/ready-pixel', 'UI/pixelUI/set-pixel', 'UI/pixelUI/date-pixel']);
+			introAssets.set('default', ['ready', "set", "go"]);
+			introAssets.set('school', ['UI/pixelUI/ready-pixel', 'UI/pixelUI/set-pixel', 'UI/pixelUI/date-pixel']);
+			introAssets.set('schoolEvil', ['UI/pixelUI/ready-pixel', 'UI/pixelUI/set-pixel', 'UI/pixelUI/date-pixel']);
 
 			var introAlts:Array<String> = introAssets.get('default');
 			var altSuffix:String = "";
@@ -899,25 +887,9 @@ class PlayState extends MusicBeatState
 			switch (swagCounter)
 			{
 				case 0:
-					var prepare:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
-					prepare.scrollFactor.set();
-					prepare.updateHitbox();
-
-					if (curStage.startsWith('school'))
-						prepare.setGraphicSize(Std.int(prepare.width * daPixelZoom));
-
-					prepare.screenCenter();
-					add(prepare);
-					FlxTween.tween(prepare, {y: prepare.y += 100, alpha: 0}, Conductor.crochet / 1000, {
-						ease: FlxEase.cubeInOut,
-						onComplete: function(twn:FlxTween)
-						{
-							prepare.destroy();
-						}
-					});
 					FlxG.sound.play(Paths.sound('intro3'), 0.6);
 				case 1:
-					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
+					var ready:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[0]));
 					ready.scrollFactor.set();
 					ready.updateHitbox();
 
@@ -935,7 +907,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro2'), 0.6);
 				case 2:
-					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
+					var set:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[1]));
 					set.scrollFactor.set();
 
 					if (curStage.startsWith('school'))
@@ -952,7 +924,7 @@ class PlayState extends MusicBeatState
 					});
 					FlxG.sound.play(Paths.sound('intro1'), 0.6);
 				case 3:
-					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[3]));
+					var go:FlxSprite = new FlxSprite().loadGraphic(Paths.image(introAlts[2]));
 					go.scrollFactor.set();
 
 					if (curStage.startsWith('school'))
@@ -1737,7 +1709,6 @@ class PlayState extends MusicBeatState
 		var score:Int = 350;
 
 		var daRating:String = 'sick';
-		var shouldSplash:Bool = false;
 
 		if (noteDiff > Conductor.safeZoneOffset * 0.9)
 		{
@@ -1753,14 +1724,6 @@ class PlayState extends MusicBeatState
 		{
 			daRating = 'good';
 			score = 200;
-		} else { // sick
-			shouldSplash = true;
-		}
-		if (shouldSplash && FlxG.save.data.splash) {
-			// notesplashes
-			var daNoteSplash:NoteSplash = grpNoteSplashes.recycle(NoteSplash);
-			daNoteSplash.setupNoteSplash(daNote.x, strumLine.y, daNote.noteData);
-			grpNoteSplashes.add(daNoteSplash);
 		}
 
 		songScore += score;
